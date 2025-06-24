@@ -1,0 +1,501 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="HospitalVolunteersDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AssignedRequests">
+          <Key>
+            <PropertyRef Name="IdAssignedRequests" />
+          </Key>
+          <Property Name="IdAssignedRequests" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdRequests" Type="int" />
+          <Property Name="IdVolunteer" Type="int" />
+        </EntityType>
+        <EntityType Name="HelpRequest">
+          <Key>
+            <PropertyRef Name="IdHelpRequest" />
+          </Key>
+          <Property Name="IdHelpRequest" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NameHelpRequest" Type="nvarchar" MaxLength="50" />
+          <Property Name="PhoneHelpRequest" Type="nchar" MaxLength="10" />
+          <Property Name="Address" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Requests">
+          <Key>
+            <PropertyRef Name="IdRequests" />
+          </Key>
+          <Property Name="IdRequests" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdHelpRequest" Type="int" />
+          <Property Name="ContentRequests" Type="nvarchar" MaxLength="100" />
+          <Property Name="StatusRequests" Type="nvarchar" MaxLength="10" />
+          <Property Name="DateRequests" Type="datetime" />
+          <Property Name="IdService" Type="int" />
+          <Property Name="HoursNumber" Type="int" />
+        </EntityType>
+        <EntityType Name="Service">
+          <Key>
+            <PropertyRef Name="IdService" />
+          </Key>
+          <Property Name="IdService" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NameService" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="ServiceForVolunteer">
+          <Key>
+            <PropertyRef Name="IdServiceForVolunteer" />
+          </Key>
+          <Property Name="IdServiceForVolunteer" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdVolunteer" Type="int" />
+          <Property Name="IdService" Type="int" />
+          <Property Name="VolunteerHours" Type="int" />
+        </EntityType>
+        <EntityType Name="Volunteer">
+          <Key>
+            <PropertyRef Name="IdVolunteer" />
+          </Key>
+          <Property Name="IdVolunteer" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NameVolunteer" Type="nvarchar" MaxLength="50" />
+          <Property Name="Phone" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <Association Name="FK__AssignedR__IdReq__6E01572D">
+          <End Role="Requests" Type="Self.Requests" Multiplicity="0..1" />
+          <End Role="AssignedRequests" Type="Self.AssignedRequests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Requests">
+              <PropertyRef Name="IdRequests" />
+            </Principal>
+            <Dependent Role="AssignedRequests">
+              <PropertyRef Name="IdRequests" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AssignedR__IdVol__160F4887">
+          <End Role="Volunteer" Type="Self.Volunteer" Multiplicity="0..1" />
+          <End Role="AssignedRequests" Type="Self.AssignedRequests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Volunteer">
+              <PropertyRef Name="IdVolunteer" />
+            </Principal>
+            <Dependent Role="AssignedRequests">
+              <PropertyRef Name="IdVolunteer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Requests__IdHelp__19DFD96B">
+          <End Role="HelpRequest" Type="Self.HelpRequest" Multiplicity="0..1" />
+          <End Role="Requests" Type="Self.Requests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="HelpRequest">
+              <PropertyRef Name="IdHelpRequest" />
+            </Principal>
+            <Dependent Role="Requests">
+              <PropertyRef Name="IdHelpRequest" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Requests__IdServ__412EB0B6">
+          <End Role="Service" Type="Self.Service" Multiplicity="0..1" />
+          <End Role="Requests" Type="Self.Requests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Service">
+              <PropertyRef Name="IdService" />
+            </Principal>
+            <Dependent Role="Requests">
+              <PropertyRef Name="IdService" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ServiceFo__IdSer__4316F928">
+          <End Role="Service" Type="Self.Service" Multiplicity="0..1" />
+          <End Role="ServiceForVolunteer" Type="Self.ServiceForVolunteer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Service">
+              <PropertyRef Name="IdService" />
+            </Principal>
+            <Dependent Role="ServiceForVolunteer">
+              <PropertyRef Name="IdService" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ServiceFo__IdVol__17036CC0">
+          <End Role="Volunteer" Type="Self.Volunteer" Multiplicity="0..1" />
+          <End Role="ServiceForVolunteer" Type="Self.ServiceForVolunteer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Volunteer">
+              <PropertyRef Name="IdVolunteer" />
+            </Principal>
+            <Dependent Role="ServiceForVolunteer">
+              <PropertyRef Name="IdVolunteer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="GetExclusiveServicesCount" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+          <Parameter Name="IdVolunteer" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetRemainingMonthlyHours" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+          <Parameter Name="IdVolunteer" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetServiceStatistics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdService" Type="int" Mode="In" />
+          <Parameter Name="VolunteerCount" Type="int" Mode="InOut" />
+          <Parameter Name="ApprovedRequestCount" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="GetTopVolunteersByService" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdService" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetVolunteerAssignmentsDetails" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdVolunteer" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetVolunteerMonthlyHours" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdVolunteer" Type="int" Mode="In" />
+          <Parameter Name="CurrentMonthHours" Type="int" Mode="InOut" />
+          <Parameter Name="PreviousMonthHours" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="IsServiceHoursSufficient" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
+          <Parameter Name="ServiceId" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="HospitalVolunteersDBModelStoreContainer">
+          <EntitySet Name="AssignedRequests" EntityType="Self.AssignedRequests" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HelpRequest" EntityType="Self.HelpRequest" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Requests" EntityType="Self.Requests" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Service" EntityType="Self.Service" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServiceForVolunteer" EntityType="Self.ServiceForVolunteer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Volunteer" EntityType="Self.Volunteer" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__AssignedR__IdReq__6E01572D" Association="Self.FK__AssignedR__IdReq__6E01572D">
+            <End Role="Requests" EntitySet="Requests" />
+            <End Role="AssignedRequests" EntitySet="AssignedRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AssignedR__IdVol__160F4887" Association="Self.FK__AssignedR__IdVol__160F4887">
+            <End Role="Volunteer" EntitySet="Volunteer" />
+            <End Role="AssignedRequests" EntitySet="AssignedRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Requests__IdHelp__19DFD96B" Association="Self.FK__Requests__IdHelp__19DFD96B">
+            <End Role="HelpRequest" EntitySet="HelpRequest" />
+            <End Role="Requests" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Requests__IdServ__412EB0B6" Association="Self.FK__Requests__IdServ__412EB0B6">
+            <End Role="Service" EntitySet="Service" />
+            <End Role="Requests" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ServiceFo__IdSer__4316F928" Association="Self.FK__ServiceFo__IdSer__4316F928">
+            <End Role="Service" EntitySet="Service" />
+            <End Role="ServiceForVolunteer" EntitySet="ServiceForVolunteer" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ServiceFo__IdVol__17036CC0" Association="Self.FK__ServiceFo__IdVol__17036CC0">
+            <End Role="Volunteer" EntitySet="Volunteer" />
+            <End Role="ServiceForVolunteer" EntitySet="ServiceForVolunteer" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="HospitalVolunteersDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AssignedRequests">
+          <Key>
+            <PropertyRef Name="IdAssignedRequests" />
+          </Key>
+          <Property Name="IdAssignedRequests" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdRequests" Type="Int32" />
+          <Property Name="IdVolunteer" Type="Int32" />
+          <NavigationProperty Name="Requests" Relationship="Self.FK__AssignedR__IdReq__6E01572D" FromRole="AssignedRequests" ToRole="Requests" />
+          <NavigationProperty Name="Volunteer" Relationship="Self.FK__AssignedR__IdVol__6EF57B66" FromRole="AssignedRequests" ToRole="Volunteer" />
+        </EntityType>
+        <EntityType Name="HelpRequest">
+          <Key>
+            <PropertyRef Name="IdHelpRequest" />
+          </Key>
+          <Property Name="IdHelpRequest" Type="Int32" Nullable="false" />
+          <Property Name="NameHelpRequest" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneHelpRequest" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Requests" Relationship="Self.FK__Requests__IdHelp__5AEE82B9" FromRole="HelpRequest" ToRole="Requests" />
+        </EntityType>
+        <EntityType Name="Requests">
+          <Key>
+            <PropertyRef Name="IdRequests" />
+          </Key>
+          <Property Name="IdRequests" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdHelpRequest" Type="Int32" />
+          <Property Name="ContentRequests" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="StatusRequests" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="DateRequests" Type="DateTime" Precision="3" />
+          <Property Name="IdService" Type="Int32" />
+          <Property Name="HoursNumber" Type="Int32" />
+          <NavigationProperty Name="AssignedRequests" Relationship="Self.FK__AssignedR__IdReq__6E01572D" FromRole="Requests" ToRole="AssignedRequests" />
+          <NavigationProperty Name="HelpRequest" Relationship="Self.FK__Requests__IdHelp__5AEE82B9" FromRole="Requests" ToRole="HelpRequest" />
+          <NavigationProperty Name="Service" Relationship="Self.FK__Requests__IdServ__412EB0B6" FromRole="Requests" ToRole="Service" />
+        </EntityType>
+        <EntityType Name="Service">
+          <Key>
+            <PropertyRef Name="IdService" />
+          </Key>
+          <Property Name="IdService" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NameService" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Requests" Relationship="Self.FK__Requests__IdServ__412EB0B6" FromRole="Service" ToRole="Requests" />
+          <NavigationProperty Name="ServiceForVolunteer" Relationship="Self.FK__ServiceFo__IdSer__4316F928" FromRole="Service" ToRole="ServiceForVolunteer" />
+        </EntityType>
+        <EntityType Name="ServiceForVolunteer">
+          <Key>
+            <PropertyRef Name="IdServiceForVolunteer" />
+          </Key>
+          <Property Name="IdServiceForVolunteer" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdVolunteer" Type="Int32" />
+          <Property Name="IdService" Type="Int32" />
+          <Property Name="VolunteerHours" Type="Int32" />
+          <NavigationProperty Name="Service" Relationship="Self.FK__ServiceFo__IdSer__4316F928" FromRole="ServiceForVolunteer" ToRole="Service" />
+          <NavigationProperty Name="Volunteer" Relationship="Self.FK__ServiceFo__IdVol__4222D4EF" FromRole="ServiceForVolunteer" ToRole="Volunteer" />
+        </EntityType>
+        <EntityType Name="Volunteer">
+          <Key>
+            <PropertyRef Name="IdVolunteer" />
+          </Key>
+          <Property Name="IdVolunteer" Type="Int32" Nullable="false" />
+          <Property Name="NameVolunteer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AssignedRequests" Relationship="Self.FK__AssignedR__IdVol__6EF57B66" FromRole="Volunteer" ToRole="AssignedRequests" />
+          <NavigationProperty Name="ServiceForVolunteer" Relationship="Self.FK__ServiceFo__IdVol__4222D4EF" FromRole="Volunteer" ToRole="ServiceForVolunteer" />
+        </EntityType>
+        <Association Name="FK__AssignedR__IdReq__6E01572D">
+          <End Role="Requests" Type="Self.Requests" Multiplicity="0..1" />
+          <End Role="AssignedRequests" Type="Self.AssignedRequests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Requests">
+              <PropertyRef Name="IdRequests" />
+            </Principal>
+            <Dependent Role="AssignedRequests">
+              <PropertyRef Name="IdRequests" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AssignedR__IdVol__6EF57B66">
+          <End Role="Volunteer" Type="Self.Volunteer" Multiplicity="0..1" />
+          <End Role="AssignedRequests" Type="Self.AssignedRequests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Volunteer">
+              <PropertyRef Name="IdVolunteer" />
+            </Principal>
+            <Dependent Role="AssignedRequests">
+              <PropertyRef Name="IdVolunteer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Requests__IdHelp__5AEE82B9">
+          <End Role="HelpRequest" Type="Self.HelpRequest" Multiplicity="0..1" />
+          <End Role="Requests" Type="Self.Requests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="HelpRequest">
+              <PropertyRef Name="IdHelpRequest" />
+            </Principal>
+            <Dependent Role="Requests">
+              <PropertyRef Name="IdHelpRequest" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Requests__IdServ__412EB0B6">
+          <End Role="Service" Type="Self.Service" Multiplicity="0..1" />
+          <End Role="Requests" Type="Self.Requests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Service">
+              <PropertyRef Name="IdService" />
+            </Principal>
+            <Dependent Role="Requests">
+              <PropertyRef Name="IdService" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ServiceFo__IdSer__4316F928">
+          <End Role="Service" Type="Self.Service" Multiplicity="0..1" />
+          <End Role="ServiceForVolunteer" Type="Self.ServiceForVolunteer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Service">
+              <PropertyRef Name="IdService" />
+            </Principal>
+            <Dependent Role="ServiceForVolunteer">
+              <PropertyRef Name="IdService" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ServiceFo__IdVol__4222D4EF">
+          <End Role="Volunteer" Type="Self.Volunteer" Multiplicity="0..1" />
+          <End Role="ServiceForVolunteer" Type="Self.ServiceForVolunteer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Volunteer">
+              <PropertyRef Name="IdVolunteer" />
+            </Principal>
+            <Dependent Role="ServiceForVolunteer">
+              <PropertyRef Name="IdVolunteer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="HospitalVolunteersDBEntities3" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AssignedRequests" EntityType="Self.AssignedRequests" />
+          <EntitySet Name="HelpRequest" EntityType="Self.HelpRequest" />
+          <EntitySet Name="Requests" EntityType="Self.Requests" />
+          <EntitySet Name="Service" EntityType="Self.Service" />
+          <EntitySet Name="ServiceForVolunteer" EntityType="Self.ServiceForVolunteer" />
+          <EntitySet Name="Volunteer" EntityType="Self.Volunteer" />
+          <AssociationSet Name="FK__AssignedR__IdReq__6E01572D" Association="Self.FK__AssignedR__IdReq__6E01572D">
+            <End Role="Requests" EntitySet="Requests" />
+            <End Role="AssignedRequests" EntitySet="AssignedRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AssignedR__IdVol__6EF57B66" Association="Self.FK__AssignedR__IdVol__6EF57B66">
+            <End Role="Volunteer" EntitySet="Volunteer" />
+            <End Role="AssignedRequests" EntitySet="AssignedRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Requests__IdHelp__5AEE82B9" Association="Self.FK__Requests__IdHelp__5AEE82B9">
+            <End Role="HelpRequest" EntitySet="HelpRequest" />
+            <End Role="Requests" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Requests__IdServ__412EB0B6" Association="Self.FK__Requests__IdServ__412EB0B6">
+            <End Role="Service" EntitySet="Service" />
+            <End Role="Requests" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ServiceFo__IdSer__4316F928" Association="Self.FK__ServiceFo__IdSer__4316F928">
+            <End Role="Service" EntitySet="Service" />
+            <End Role="ServiceForVolunteer" EntitySet="ServiceForVolunteer" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ServiceFo__IdVol__4222D4EF" Association="Self.FK__ServiceFo__IdVol__4222D4EF">
+            <End Role="Volunteer" EntitySet="Volunteer" />
+            <End Role="ServiceForVolunteer" EntitySet="ServiceForVolunteer" />
+          </AssociationSet>
+          <FunctionImport Name="GetTopVolunteersByService" ReturnType="Collection(HospitalVolunteersDBModel.GetTopVolunteersByService_Result)">
+          <Parameter Name="IdService" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetServiceStatistics">
+            <Parameter Name="IdService" Mode="In" Type="Int32" />
+            <Parameter Name="VolunteerCount" Mode="InOut" Type="Int32" />
+            <Parameter Name="ApprovedRequestCount" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetVolunteerAssignmentsDetails" ReturnType="Collection(HospitalVolunteersDBModel.GetVolunteerAssignmentsDetails_Result)">
+          <Parameter Name="IdVolunteer" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetVolunteerMonthlyHours">
+            <Parameter Name="IdVolunteer" Mode="In" Type="Int32" />
+            <Parameter Name="CurrentMonthHours" Mode="InOut" Type="Int32" />
+            <Parameter Name="PreviousMonthHours" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="GetTopVolunteersByService_Result">
+          <Property Type="Int32" Name="IdVolunteer" Nullable="false" />
+          <Property Type="String" Name="NameVolunteer" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Phone" Nullable="true" MaxLength="10" />
+        </ComplexType>
+        <ComplexType Name="GetVolunteerAssignmentsDetails_Result">
+          <Property Type="String" Name="VolunteerName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="VolunteerPhone" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="ServiceName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="RequestContent" Nullable="true" MaxLength="100" />
+          <Property Type="DateTime" Name="RequestDate" Nullable="true" Precision="23" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="HospitalVolunteersDBModelStoreContainer" CdmEntityContainer="HospitalVolunteersDBEntities3">
+          <EntitySetMapping Name="AssignedRequests">
+            <EntityTypeMapping TypeName="HospitalVolunteersDBModel.AssignedRequests">
+              <MappingFragment StoreEntitySet="AssignedRequests">
+                <ScalarProperty Name="IdAssignedRequests" ColumnName="IdAssignedRequests" />
+                <ScalarProperty Name="IdRequests" ColumnName="IdRequests" />
+                <ScalarProperty Name="IdVolunteer" ColumnName="IdVolunteer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HelpRequest">
+            <EntityTypeMapping TypeName="HospitalVolunteersDBModel.HelpRequest">
+              <MappingFragment StoreEntitySet="HelpRequest">
+                <ScalarProperty Name="IdHelpRequest" ColumnName="IdHelpRequest" />
+                <ScalarProperty Name="NameHelpRequest" ColumnName="NameHelpRequest" />
+                <ScalarProperty Name="PhoneHelpRequest" ColumnName="PhoneHelpRequest" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Requests">
+            <EntityTypeMapping TypeName="HospitalVolunteersDBModel.Requests">
+              <MappingFragment StoreEntitySet="Requests">
+                <ScalarProperty Name="IdRequests" ColumnName="IdRequests" />
+                <ScalarProperty Name="IdHelpRequest" ColumnName="IdHelpRequest" />
+                <ScalarProperty Name="ContentRequests" ColumnName="ContentRequests" />
+                <ScalarProperty Name="StatusRequests" ColumnName="StatusRequests" />
+                <ScalarProperty Name="DateRequests" ColumnName="DateRequests" />
+                <ScalarProperty Name="IdService" ColumnName="IdService" />
+                <ScalarProperty Name="HoursNumber" ColumnName="HoursNumber" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Service">
+            <EntityTypeMapping TypeName="HospitalVolunteersDBModel.Service">
+              <MappingFragment StoreEntitySet="Service">
+                <ScalarProperty Name="IdService" ColumnName="IdService" />
+                <ScalarProperty Name="NameService" ColumnName="NameService" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServiceForVolunteer">
+            <EntityTypeMapping TypeName="HospitalVolunteersDBModel.ServiceForVolunteer">
+              <MappingFragment StoreEntitySet="ServiceForVolunteer">
+                <ScalarProperty Name="IdServiceForVolunteer" ColumnName="IdServiceForVolunteer" />
+                <ScalarProperty Name="IdVolunteer" ColumnName="IdVolunteer" />
+                <ScalarProperty Name="IdService" ColumnName="IdService" />
+                <ScalarProperty Name="VolunteerHours" ColumnName="VolunteerHours" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Volunteer">
+            <EntityTypeMapping TypeName="HospitalVolunteersDBModel.Volunteer">
+              <MappingFragment StoreEntitySet="Volunteer">
+                <ScalarProperty Name="IdVolunteer" ColumnName="IdVolunteer" />
+                <ScalarProperty Name="NameVolunteer" ColumnName="NameVolunteer" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetTopVolunteersByService" FunctionName="HospitalVolunteersDBModel.Store.GetTopVolunteersByService">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="HospitalVolunteersDBModel.GetTopVolunteersByService_Result">
+                <ScalarProperty Name="IdVolunteer" ColumnName="IdVolunteer" />
+                <ScalarProperty Name="NameVolunteer" ColumnName="NameVolunteer" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetServiceStatistics" FunctionName="HospitalVolunteersDBModel.Store.GetServiceStatistics" />
+          <FunctionImportMapping FunctionImportName="GetVolunteerAssignmentsDetails" FunctionName="HospitalVolunteersDBModel.Store.GetVolunteerAssignmentsDetails">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="HospitalVolunteersDBModel.GetVolunteerAssignmentsDetails_Result">
+                <ScalarProperty Name="VolunteerName" ColumnName="VolunteerName" />
+                <ScalarProperty Name="VolunteerPhone" ColumnName="VolunteerPhone" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="RequestContent" ColumnName="RequestContent" />
+                <ScalarProperty Name="RequestDate" ColumnName="RequestDate" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetVolunteerMonthlyHours" FunctionName="HospitalVolunteersDBModel.Store.GetVolunteerMonthlyHours" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
